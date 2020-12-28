@@ -570,7 +570,7 @@
          * @param {String} type an string to know how to fetch it: "text","arraybuffer","json","blob"
          * @param {Function} on_complete callback(data)
          * @param {Function} on_error in case of an error
-         * @return {FileReader|Promise} returns the object used to 
+         * @return {FileReader|Promise} returns the object used to
          */
 		fetchFile: function( url, type, on_complete, on_error ) {
 			var that = this;
@@ -757,7 +757,8 @@
      */
 
     LGraph.prototype.attachCanvas = function(graphcanvas) {
-        if (graphcanvas.constructor != LGraphCanvas) {
+        //if (graphcanvas.constructor != LGraphCanvas) {
+        if ( ! graphcanvas.constructor.prototype instanceof LGraphCanvas ) {
             throw "attachCanvas expects a LGraphCanvas instance";
         }
         if (graphcanvas.graph && graphcanvas.graph != this) {
@@ -871,7 +872,7 @@
      * Run N steps (cycles) of the graph
      * @method runStep
      * @param {number} num number of steps to run, default is 1
-     * @param {Boolean} do_not_catch_errors [optional] if you want to try/catch errors 
+     * @param {Boolean} do_not_catch_errors [optional] if you want to try/catch errors
      * @param {number} limit max number of nodes to execute (used to execute from start to a node)
      */
 
@@ -1988,7 +1989,7 @@
                     "weird LLink bug, link info is not a LLink but a regular object"
                 );
                 var link2 = new LLink();
-                for (var j in link) { 
+                for (var j in link) {
                     link2[j] = link[j];
                 }
                 this.links[i] = link2;
@@ -2133,7 +2134,7 @@
 				if(callback)
 					callback();
 			});
-			
+
 			reader.readAsText(url);
 			return;
 		}
@@ -2224,7 +2225,7 @@
 		+ resizable: if set to false it wont be resizable with the mouse
 		+ horizontal: slots are distributed horizontally
 		+ widgets_start_y: widgets start at y distance from the top of the node
-	
+
 	flags object:
 		+ collapsed: if it is collapsed
 
@@ -3422,7 +3423,7 @@
      * @param {String} name the text to show on the widget
      * @param {String} value the default value
      * @param {Function|String} callback function to call when it changes (optionally, it can be the name of the property to modify)
-     * @param {Object} options the object that contains special properties of this widget 
+     * @param {Object} options the object that contains special properties of this widget
      * @return {Object} the created widget object
      */
     LGraphNode.prototype.addWidget = function( type, name, value, callback, options )
@@ -5208,7 +5209,7 @@ LGraphNode.prototype.executeAction = function(action)
 
 		if( this.set_canvas_dirty_on_mouse_event )
 			this.dirty_canvas = true;
-		
+
 		if (!this.graph) {
             return;
         }
@@ -5300,7 +5301,7 @@ LGraphNode.prototype.executeAction = function(action)
                             10
                         )
                     ) {
-						this.graph.beforeChange();						
+						this.graph.beforeChange();
                         this.resizing_node = node;
                         this.canvas.style.cursor = "se-resize";
                         skip_action = true;
@@ -5466,7 +5467,7 @@ LGraphNode.prototype.executeAction = function(action)
             } //clicked outside of nodes
             else {
                 //search for link connector
-				if(!this.read_only) 
+				if(!this.read_only)
 					for (var i = 0; i < this.visible_links.length; ++i) {
 						var link = this.visible_links[i];
 						var center = link._pos;
@@ -5605,7 +5606,7 @@ LGraphNode.prototype.executeAction = function(action)
             this.dragging_rectangle[2] = e.canvasX - this.dragging_rectangle[0];
             this.dragging_rectangle[3] = e.canvasY - this.dragging_rectangle[1];
             this.dirty_canvas = true;
-        } 
+        }
 		else if (this.selected_group && !this.read_only)
 		{
             //moving/resizing a group
@@ -6562,7 +6563,7 @@ LGraphNode.prototype.executeAction = function(action)
 				continue;
 
 			//autoconnect when possible (very basic, only takes into account first input-output)
-			if(node.inputs && node.inputs.length && node.outputs && node.outputs.length && LiteGraph.isValidConnection( node.inputs[0].type, node.outputs[0].type ) && node.inputs[0].link && node.outputs[0].links && node.outputs[0].links.length ) 
+			if(node.inputs && node.inputs.length && node.outputs && node.outputs.length && LiteGraph.isValidConnection( node.inputs[0].type, node.outputs[0].type ) && node.inputs[0].link && node.outputs[0].links && node.outputs[0].links.length )
 			{
 				var input_link = node.graph.links[ node.inputs[0].link ];
 				var output_link = node.graph.links[ node.outputs[0].links[0] ];
@@ -6965,7 +6966,7 @@ LGraphNode.prototype.executeAction = function(action)
             ctx.restore();
         }
 
-		//draws panel in the corner 
+		//draws panel in the corner
 		if (this._graph_stack && this._graph_stack.length) {
 			this.drawSubgraphPanel( ctx );
 		}
@@ -8827,8 +8828,8 @@ LGraphNode.prototype.executeAction = function(action)
 			var widget_height = w.computeSize ? w.computeSize(width)[1] : LiteGraph.NODE_WIDGET_HEIGHT;
 			var widget_width = w.width || width;
 			//outside
-			if ( w != active_widget && 
-				(x < 6 || x > widget_width - 12 || y < w.last_y || y > w.last_y + widget_height) ) 
+			if ( w != active_widget &&
+				(x < 6 || x > widget_width - 12 || y < w.last_y || y > w.last_y + widget_height) )
 				continue;
 
 			var old_value = w.value;
@@ -8878,7 +8879,7 @@ LGraphNode.prototype.executeAction = function(action)
 							values = w.options.values(w, node);
 						}
 						var values_list = null;
-						
+
 						if( w.type != "number")
 							values_list = values.constructor === Array ? values : Object.keys(values);
 
@@ -8891,7 +8892,7 @@ LGraphNode.prototype.executeAction = function(action)
 							if ( w.options.max != null && w.value > w.options.max ) {
 								w.value = w.options.max;
 							}
-						} else if (delta) { //clicked in arrow, used for combos 
+						} else if (delta) { //clicked in arrow, used for combos
 							var index = -1;
 							this.last_mouseclick = 0; //avoids dobl click event
 							if(values.constructor === Object)
@@ -8908,7 +8909,7 @@ LGraphNode.prototype.executeAction = function(action)
 								w.value = values[index];
 							else
 								w.value = index;
-						} else { //combo clicked 
+						} else { //combo clicked
 							var text_values = values != values_list ? Object.values(values) : values;
 							var menu = new LiteGraph.ContextMenu(text_values, {
 									scale: Math.max(1, this.ds.scale),
@@ -9817,7 +9818,7 @@ LGraphNode.prototype.executeAction = function(action)
         dialog.style.top = top + "px";
 
 		//To avoid out of screen problems
-		if(event.layerY > (rect.height - 200)) 
+		if(event.layerY > (rect.height - 200))
             helper.style.maxHeight = (rect.height - event.layerY - 20) + "px";
 
 		/*
@@ -10266,9 +10267,9 @@ LGraphNode.prototype.executeAction = function(action)
 				elem.classList.add("boolean");
 				if(value)
 					elem.classList.add("bool-on");
-				elem.addEventListener("click", function(){ 
-					//var v = node.properties[this.dataset["property"]]; 
-					//node.setProperty(this.dataset["property"],!v); this.innerText = v ? "true" : "false"; 
+				elem.addEventListener("click", function(){
+					//var v = node.properties[this.dataset["property"]];
+					//node.setProperty(this.dataset["property"],!v); this.innerText = v ? "true" : "false";
 					var propname = this.dataset["property"];
 					this.value = !this.value;
 					this.classList.toggle("bool-on");
@@ -10279,14 +10280,14 @@ LGraphNode.prototype.executeAction = function(action)
 			else if (type == "string" || type == "number")
 			{
 				value_element.setAttribute("contenteditable",true);
-				value_element.addEventListener("keydown", function(e){ 
+				value_element.addEventListener("keydown", function(e){
 					if(e.code == "Enter")
 					{
 						e.preventDefault();
 						this.blur();
 					}
 				});
-				value_element.addEventListener("blur", function(){ 
+				value_element.addEventListener("blur", function(){
 					var v = this.innerText;
 					var propname = this.parentNode.dataset["property"];
 					var proptype = this.parentNode.dataset["type"];
@@ -10299,7 +10300,7 @@ LGraphNode.prototype.executeAction = function(action)
 				var str_value = LGraphCanvas.getPropertyPrintableValue( value, options.values );
 				value_element.innerText = str_value;
 
-				value_element.addEventListener("click", function(event){ 
+				value_element.addEventListener("click", function(event){
 					var values = options.values || [];
 					var propname = this.parentNode.dataset["property"];
 					var elem_that = this;
@@ -10310,7 +10311,7 @@ LGraphNode.prototype.executeAction = function(action)
 						},
 						ref_window);
 					function inner_clicked(v, option, event) {
-						//node.setProperty(propname,v); 
+						//node.setProperty(propname,v);
 						//graphcanvas.dirty_canvas = true;
 						elem_that.innerText = v;
 						innerChange(propname,v);
@@ -10343,7 +10344,7 @@ LGraphNode.prototype.executeAction = function(action)
 
 		if(values.constructor === Array)
 		{
-			return String(value);			
+			return String(value);
 		}
 
 		if(values.constructor === Object)
@@ -10466,7 +10467,7 @@ LGraphNode.prototype.executeAction = function(action)
 
 		this.canvas.parentNode.appendChild( panel );
 	}
-	
+
 	LGraphCanvas.prototype.showSubgraphPropertiesDialog = function(node)
 	{
 		console.log("showing subgraph properties dialog");
@@ -10800,7 +10801,7 @@ LGraphNode.prototype.executeAction = function(action)
                 },
                 {
                     content: "Resize", callback: function() {
-                        if(node.resizable) 
+                        if(node.resizable)
                             return LGraphCanvas.onResizeNode;
                     }
                 },
@@ -10939,7 +10940,7 @@ LGraphNode.prototype.executeAction = function(action)
                         ? "Cannot rename"
                         : { content: "Rename Slot", slot: slot }
                 );
-    
+
             }
             options.title =
                 (slot.input ? slot.input.type : slot.output.type) || "*";
