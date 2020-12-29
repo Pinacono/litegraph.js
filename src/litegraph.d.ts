@@ -972,7 +972,7 @@ export declare class LGraphNode {
     onBeforeConnectInput?(
         inputIndex: number
     ): number;
-    
+
     /** a connection changed (new one or removed) (LiteGraph.INPUT or LiteGraph.OUTPUT, slot, true if connected, link_info, input_info or output_info ) */
     onConnectionsChange(
         type: number,
@@ -980,7 +980,7 @@ export declare class LGraphNode {
         isConnected: boolean,
         link: LLink,
         ioSlot: (INodeOutputSlot | INodeInputSlot)
-    ): void;                           
+    ): void;
 
     /** Called by `LGraphCanvas.processContextMenu` */
     getMenuOptions?(graphCanvas: LGraphCanvas): ContextMenuItem[];
@@ -1089,6 +1089,7 @@ export declare class LGraphCanvas {
         options?: {
             skip_render?: boolean;
             autoresize?: boolean;
+            show_info?: boolean;
         }
     );
 
