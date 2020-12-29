@@ -9062,11 +9062,23 @@ LGraphNode.prototype.executeAction = function(action)
     LGraphCanvas.prototype.resize = function(width, height) {
         if (!width && !height) {
             var parent = this.canvas.parentNode;
+            /*
             width = parent.offsetWidth;
             height = parent.offsetHeight;
+            */
+           var computed  = window.getComputedStyle(parent);
+           var padlft = parseFloat(computed.getPropertyValue('padding-left'));
+           var padrgt = parseFloat(computed.getPropertyValue('padding-right'));
+           var padtop = parseFloat(computed.getPropertyValue('padding-top'));
+           var padbtm = parseFloat(computed.getPropertyValue('padding-bottom'));
+
+           // set canvas dimension
+           width  = parent.clientWidth  - padlft - padrgt;
+           height = parent.clientHeight - padtop - padbtm;
         }
 
         if (this.canvas.width == width && this.canvas.height == height) {
+            this.setDirty(true, true);
             return;
         }
 
