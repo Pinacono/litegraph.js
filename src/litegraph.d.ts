@@ -1170,6 +1170,8 @@ export declare class LGraphCanvas {
     onMouse: ((event: MouseEvent) => boolean) | null;
     /** Called by `LGraphCanvas.drawFrontCanvas` and `LGraphCanvas.drawLinkTooltip` */
     onDrawLinkTooltip: ((ctx: CanvasRenderingContext2D, link: LLink, _this: this) => void) | null;
+    /** Called by `LiteGraph.createNode` */
+    onNodeCreated: (() => void) | null;
     /** Called by `LGraphCanvas.selectNodes` */
     onNodeMoved: ((node: LGraphNode) => void) | null;
     /** Called by `LGraphCanvas.processNodeSelected` */

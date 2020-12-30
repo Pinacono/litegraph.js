@@ -380,6 +380,10 @@
                 }
             }
 
+            if ( node.onNodeCreated ) {
+                node.onNodeCreated();
+            }
+
             return node;
         },
 
