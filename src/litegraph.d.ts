@@ -1196,6 +1196,7 @@ export declare class LGraphCanvas {
         | ((name: string, event: MouseEvent, graphCanvas: LGraphCanvas) => void)
         | null;
     pause_rendering: boolean;
+    read_only: boolean;
     render_canvas_border: boolean;
     render_collapsed_slots: boolean;
     render_connection_arrows: boolean;

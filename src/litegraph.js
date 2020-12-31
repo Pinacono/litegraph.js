@@ -9561,14 +9561,10 @@ LGraphNode.prototype.executeAction = function(action)
     };
 
     LGraphCanvas.onShowPropertyEditor = function(item, options, e, menu, node) {
-        var input_html = "";
         var property = item.property || "title";
         var value = node[property];
 
-        var dialog = document.createElement("div");
-        dialog.className = "graphdialog";
-        dialog.innerHTML =
-            "<span class='name'></span><input autofocus type='text' class='value'/><button>OK</button>";
+        var dialog = this.createDialog("<span class='name'></span><input autofocus type='text' class='value'/><button>OK</button>", { event: e })
         var title = dialog.querySelector(".name");
         title.innerText = property;
         var input = dialog.querySelector("input");
@@ -9587,34 +9583,8 @@ LGraphNode.prototype.executeAction = function(action)
             });
         }
 
-        var graphcanvas = LGraphCanvas.active_canvas;
-        var canvas = graphcanvas.canvas;
-
-        var rect = canvas.getBoundingClientRect();
-        var offsetx = -20;
-        var offsety = -20;
-        if (rect) {
-            offsetx -= rect.left;
-            offsety -= rect.top;
-        }
-
-        if (event) {
-            dialog.style.left = event.clientX + offsetx + "px";
-            dialog.style.top = event.clientY + offsety + "px";
-        } else {
-            dialog.style.left = canvas.width * 0.5 + offsetx + "px";
-            dialog.style.top = canvas.height * 0.5 + offsety + "px";
-        }
-
         var button = dialog.querySelector("button");
-        button.addEventListener("click", inner);
-        canvas.parentNode.appendChild(dialog);
-
-        function inner() {
-            setValue(input.value);
-        }
-
-        function setValue(value) {
+        button.addEventListener("click", function() {
             if (item.type == "Number") {
                 value = Number(value);
             } else if (item.type == "Boolean") {
@@ -9625,20 +9595,16 @@ LGraphNode.prototype.executeAction = function(action)
                 dialog.parentNode.removeChild(dialog);
             }
             node.setDirtyCanvas(true, true);
-        }
+        });
     };
 
     LGraphCanvas.prototype.prompt = function(title, value, callback, event) {
         var that = this;
-        var input_html = "";
         title = title || "";
 
         var modified = false;
 
-        var dialog = document.createElement("div");
-        dialog.className = "graphdialog rounded";
-        dialog.innerHTML =
-            "<span class='name'></span> <input autofocus type='text' class='value'/><button class='rounded'>OK</button>";
+        var dialog = this.createDialog("<span class='name'></span> <input autofocus type='text' class='value'/><button class='rounded'>OK</button>", { event: event })
         dialog.close = function() {
             that.prompt_box = null;
             if (dialog.parentNode) {
@@ -9697,26 +9663,6 @@ LGraphNode.prototype.executeAction = function(action)
             dialog.close();
         });
 
-        var graphcanvas = LGraphCanvas.active_canvas;
-        var canvas = graphcanvas.canvas;
-
-        var rect = canvas.getBoundingClientRect();
-        var offsetx = -20;
-        var offsety = -20;
-        if (rect) {
-            offsetx -= rect.left;
-            offsety -= rect.top;
-        }
-
-        if (event) {
-            dialog.style.left = event.clientX + offsetx + "px";
-            dialog.style.top = event.clientY + offsety + "px";
-        } else {
-            dialog.style.left = canvas.width * 0.5 + offsetx + "px";
-            dialog.style.top = canvas.height * 0.5 + offsety + "px";
-        }
-
-        canvas.parentNode.appendChild(dialog);
         setTimeout(function() {
             input.focus();
         }, 10);
@@ -9732,10 +9678,22 @@ LGraphNode.prototype.executeAction = function(action)
         var canvas = graphcanvas.canvas;
         var root_document = canvas.ownerDocument || document;
 
-        var dialog = document.createElement("div");
+        var parent;
+        if( root_document.fullscreenElement ) {
+            parent = root_document.fullscreenElement;
+        }
+        else
+        {
+            parent = root_document;
+            root_document.body.style.overflow = "hidden";
+        }
+        var dialog = this.createDialog("<span class='name'>Search</span> <input autofocus type='text' class='value rounded'/><div class='helper'></div>",
+                {
+                    event: event,
+                    parent: parent
+                });
+
         dialog.className = "litegraph litesearchbox graphdialog rounded";
-        dialog.innerHTML =
-            "<span class='name'>Search</span> <input autofocus type='text' class='value rounded'/><div class='helper'></div>";
         dialog.close = function() {
             that.search_box = null;
             root_document.body.focus();
@@ -9816,44 +9774,6 @@ LGraphNode.prototype.executeAction = function(action)
 				return true;
             });
         }
-
-		if( root_document.fullscreenElement )
-	        root_document.fullscreenElement.appendChild(dialog);
-		else
-		{
-		    root_document.body.appendChild(dialog);
-			root_document.body.style.overflow = "hidden";
-		}
-
-        //compute best position
-        var rect = canvas.getBoundingClientRect();
-
-        var left = ( event ? event.clientX : (rect.left + rect.width * 0.5) ) - 80;
-        var top = ( event ? event.clientY : (rect.top + rect.height * 0.5) ) - 20;
-        dialog.style.left = left + "px";
-        dialog.style.top = top + "px";
-
-		//To avoid out of screen problems
-		if(event.layerY > (rect.height - 200))
-            helper.style.maxHeight = (rect.height - event.layerY - 20) + "px";
-
-		/*
-        var offsetx = -20;
-        var offsety = -20;
-        if (rect) {
-            offsetx -= rect.left;
-            offsety -= rect.top;
-        }
-
-        if (event) {
-            dialog.style.left = event.clientX + offsetx + "px";
-            dialog.style.top = event.clientY + offsety + "px";
-        } else {
-            dialog.style.left = canvas.width * 0.5 + offsetx + "px";
-            dialog.style.top = canvas.height * 0.5 + offsety + "px";
-        }
-        canvas.parentNode.appendChild(dialog);
-		*/
 
         input.focus();
 
@@ -10154,9 +10074,11 @@ LGraphNode.prototype.executeAction = function(action)
         dialog.className = "graphdialog";
         dialog.innerHTML = html;
 
-        var rect = this.canvas.getBoundingClientRect();
-        var offsetx = -20;
-        var offsety = -20;
+        var rect = LGraphCanvas.active_canvas.canvas.getBoundingClientRect();
+
+        var offsetx = options.offsetx || -10;
+        var offsety = options.offsety || -10;
+
         if (rect) {
             offsetx -= rect.left;
             offsety -= rect.top;
@@ -10177,7 +10099,12 @@ LGraphNode.prototype.executeAction = function(action)
         dialog.style.left = offsetx + "px";
         dialog.style.top = offsety + "px";
 
-        this.canvas.parentNode.appendChild(dialog);
+		if( options.parent ) {
+            options.parent.appendChild(dialog);
+        }
+		else {
+            this.canvas.parentNode.appendChild(dialog)
+        }
 
         dialog.close = function() {
             if (this.parentNode) {
