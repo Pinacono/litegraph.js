@@ -10076,30 +10076,33 @@ LGraphNode.prototype.executeAction = function(action)
         dialog.className = "graphdialog";
         dialog.innerHTML = html;
 
+        var offsetx = options.offsetx || 30;
+        var offsety = options.offsety || ( 40 + 30);
+
         var rect = LGraphCanvas.active_canvas.canvas.getBoundingClientRect();
-
-        var offsetx = options.offsetx || -10;
-        var offsety = options.offsety || -10;
-
-        if (rect) {
+        if ( rect ) {
             offsetx -= rect.left;
             offsety -= rect.top;
         }
 
-        if (options.position) {
+        if ( options.position ) {
             offsetx += options.position[0];
             offsety += options.position[1];
-        } else if (options.event) {
+        }
+        else if ( options.event ) {
             offsetx += options.event.clientX;
             offsety += options.event.clientY;
-        } //centered
+        }
         else {
+            //centered
             offsetx += this.canvas.width * 0.5;
             offsety += this.canvas.height * 0.5;
         }
 
+        offsety += dialog.height * 0.5;
+
         dialog.style.left = offsetx + "px";
-        dialog.style.top = offsety + "px";
+        dialog.style.top  = offsety + "px";
 
 		if( options.parent ) {
             options.parent.appendChild(dialog);
