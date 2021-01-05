@@ -10072,26 +10072,16 @@ LGraphNode.prototype.executeAction = function(action)
     LGraphCanvas.prototype.createDialog = function(html, options) {
         options = options || {};
 
-        var dialog = document.createElement("div");
-        dialog.className = "graphdialog";
-        dialog.innerHTML = html;
-
-        var offsetx = options.offsetx || 30;
-        var offsety = options.offsety || ( 40 + 30);
-
-        var rect = LGraphCanvas.active_canvas.canvas.getBoundingClientRect();
-        if ( rect ) {
-            offsetx -= rect.left;
-            offsety -= rect.top;
-        }
+        var offsetx = options.offsetx || 0;
+        var offsety = options.offsety || 0;
 
         if ( options.position ) {
             offsetx += options.position[0];
             offsety += options.position[1];
         }
         else if ( options.event ) {
-            offsetx += options.event.clientX;
-            offsety += options.event.clientY;
+            offsetx += options.event.offsetX;
+            offsety += options.event.offsetY;
         }
         else {
             //centered
@@ -10099,17 +10089,20 @@ LGraphNode.prototype.executeAction = function(action)
             offsety += this.canvas.height * 0.5;
         }
 
-        offsety += dialog.height * 0.5;
+        var rect = LGraphCanvas.active_canvas.canvas.getBoundingClientRect();
+        offsetx += rect.left;
+        offsety += rect.top;
 
+        var dialog = document.createElement("div");
+        dialog.className = "graphdialog";
+        dialog.innerHTML = html;
+
+        dialog.style.position = 'fixed';
         dialog.style.left = offsetx + "px";
         dialog.style.top  = offsety + "px";
 
-		if( options.parent ) {
-            options.parent.appendChild(dialog);
-        }
-		else {
-            this.canvas.parentNode.appendChild(dialog)
-        }
+        var parent = options.parent || this.canvas.parentNode;
+        parent.appendChild(dialog);
 
         dialog.close = function() {
             if (this.parentNode) {
